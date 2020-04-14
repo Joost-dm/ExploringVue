@@ -1,0 +1,18 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import products from './modules/products'
+import cart from './modules/cart'
+import favorites from './modules/favorites'
+import user from './modules/user'
+import common from './modules/common'
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+  modules: {
+    products,
+    cart,
+    favorites,
+    user,
+    common
+  }
+})
