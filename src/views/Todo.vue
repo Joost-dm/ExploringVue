@@ -1,5 +1,39 @@
 <template>
-    <v-container>
+  <div >
+  <v-alert
+      v-if="alert"
+      style="
+      text-align: center;
+      position: absolute;
+      width: calc(100% - 32px);
+      z-index: 20"
+      :color="alertColor"
+      class="ma-0 pr-6 d-none d-sm-flex"
+      dark
+      icon="mdi-alert-octagon"
+      border="right"
+      transition="scale-transition"
+      prominent
+    >
+    {{message}} <v-btn class="ml-12" @click="closeAlert">закрыть</v-btn>
+  </v-alert>
+   <v-alert
+    v-if="alert"
+    style="
+    text-align: center;
+    position: absolute;
+    width: calc(100% - 32px);
+    z-index: 20"
+    :color="alertColor"
+    class="ma-0 pr-6 d-flex d-sm-none"
+    dark
+    border="right"
+    prominent
+  >
+  {{message}} <v-btn class="mt-4 ml-5"  @click="closeAlert">закрыть</v-btn>
+  </v-alert>
+  <v-container class="ma-0">
+
       <v-layout row>
         <v-flex xs12>
           <v-row
@@ -11,7 +45,13 @@
               sm="10"
               md="8"
               lg="6"
+              class="ma-0"
             >
+              <v-container class="display-3 pl-3 mt-0 pt-8 font-weight-thin d-none d-sm-flex">Список дел</v-container>
+              <v-container class="display-1 pl-3 mb-0 pt-0 font-weight-thin d-flex d-sm-none">Список дел</v-container>
+              <v-container class="subtitle-2 pl-3 mb-10  font-weight-thin">
+                Выполнено: {{completed.length}} из {{items.length}}
+              </v-container>
                <v-text-field
                 ref="form"
                 label="Добавить"
@@ -48,6 +88,7 @@
         </v-flex>
       </v-layout>
     </v-container>
+    </div>
 </template>
 
 <script>
@@ -55,7 +96,10 @@ export default {
   name: 'Todo',
   data () {
     return {
-      d: 2,
+      message: '',
+      counter: 2,
+      alert: false,
+      alertColor: 'success',
       items: [],
       newItem: '',
       nameRules: [
@@ -64,33 +108,58 @@ export default {
       ]
     }
   },
+  computed: {
+    completed () {
+      var completed = []
+      this.items.forEach(item => {
+        if (item.selected === true) {
+          completed.push(item)
+        }
+      })
+      return completed
+    }
+  },
   methods: {
     addItem () {
       if (this.$refs.form.validate()) {
         this.items.push({ selected: false, name: this.newItem })
         this.saveToLocal()
+        this.alertColor = 'success'
+        this.newAlert('Добавлена задача: ' + this.newItem)
         this.newItem = ''
       }
     },
     deleteItem (i) {
+      var delTask = this.items[i].name
       this.items.splice(i, 1)
       this.saveToLocal()
+      this.alertColor = 'error'
+      this.newAlert('Задача удалена: ' + delTask)
+      this.newItem = ''
     },
     listChanged (item, i) {
-      if (this.d % 2 === 0) {
+      if (this.counter % 2 === 0) {
         this.items[i].selected = !this.items[i].selected
         this.saveToLocal()
         console.log(this.items)
       }
-      this.d++
+      this.counter++
     },
     saveToLocal () {
-      localStorage.setItem('ToDoItems', JSON.stringify(this.items))// Точка монтирования
+      localStorage.setItem('ToDoItems', JSON.stringify(this.items))
+    },
+    newAlert (message) {
+      this.message = message
+      this.alert = true
+    },
+    closeAlert () {
+      this.alert = false
+      this.message = ''
     }
   },
   created () {
     if (localStorage.getItem('ToDoItems')) {
-      this.items = JSON.parse(localStorage.getItem('ToDoItems'))// Точка монтирования
+      this.items = JSON.parse(localStorage.getItem('ToDoItems'))
     } else {
       this.items = [{
         selected: true,
@@ -114,7 +183,6 @@ export default {
 .v-application .accent--text {
   color: red !important;
 }
-
 .delbutton {
   margin-top: 18px;
 }

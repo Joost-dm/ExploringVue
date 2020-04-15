@@ -119,7 +119,7 @@
               <v-container v-if="cartSum" class="pl-10 mt-2 pr-5" row>
               <h3 >Итого: {{cartSum}} руб.</h3>
               <v-spacer></v-spacer>
-              <router-link class="invisible-link" to="marketplace/create">
+              <router-link class="invisible-link" :to="{name: 'CreateOrder'}">
               <v-btn color="success" >оформить заказ</v-btn>
               </router-link>
               </v-container>
@@ -132,7 +132,7 @@
   <v-content>
 
     <!-- Provides the application the proper gutter -->
-    <v-container fluid>
+    <v-container fluid class="pa-4">
       <!-- If using vue-router -->
       <router-view></router-view>
     </v-container>
